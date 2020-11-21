@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import imageSegmentation import *
+from imageSegmentation import getAreaOfFood
 
 #density - gram / cm^3
 density_dict = { 1:0.609, 2:0.94, 3:0.641, 4:0.641,5:0.513, 6:0.482,7:0.481}
@@ -20,19 +20,23 @@ def getVolume(label, area, skin_area, pix_to_cm_multiplier, fruit_contour):
 	area_fruit = (area/skin_area)*skin_multiplier #area in cm^2
 	label = int(label)
 	volume = 100
-	if label == 1 or label == 5 or label == 7 or label == 6 : #sphere-apple,tomato,orange,kiwi,onion
-		radius = np.sqrt(area_fruit/np.pi)
-		volume = (4/3)*np.pi*radius*radius*radius
-		#print (area_fruit, radius, volume, skin_area)
+
+	#assume thai fastfood, they serve with plate, and it's in spherical dome shape
 	
-	if label == 2 or label == 4 or (label == 3 and area_fruit > 30): #cylinder like banana, cucumber, carrot
-		fruit_rect = cv2.minAreaRect(fruit_contour)
-		height = max(fruit_rect[1])*pix_to_cm_multiplier
-		radius = area_fruit/(2.0*height)
-		volume = np.pi*radius*radius*height
+
+	# if label == 1 or label == 5 or label == 7 or label == 6 : #sphere-apple,tomato,orange,kiwi,onion
+	# 	radius = np.sqrt(area_fruit/np.pi)
+	# 	volume = (4/3)*np.pi*radius*radius*radius
+	# 	#print (area_fruit, radius, volume, skin_area)
+	
+	# if label == 2 or label == 4 or (label == 3 and area_fruit > 30): #cylinder like banana, cucumber, carrot
+	# 	fruit_rect = cv2.minAreaRect(fruit_contour)
+	# 	height = max(fruit_rect[1])*pix_to_cm_multiplier
+	# 	radius = area_fruit/(2.0*height)
+	# 	volume = np.pi*radius*radius*height
 		
-	if (label==4 and area_fruit < 30) : # carrot
-		volume = area_fruit*0.5 #assuming width = 0.5 cm
+	# if (label==4 and area_fruit < 30) : # carrot
+	# 	volume = area_fruit*0.5 #assuming width = 0.5 cm
 	
 	return volume
 
