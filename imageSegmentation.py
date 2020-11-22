@@ -172,9 +172,7 @@ if __name__ == '__main__':
 
     origimg = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
     segmentimg = cv2.cvtColor(img_food, cv2.COLOR_BGR2RGB)
-    plt.subplot(121); plt.imshow(origimg) #expect distorted color
-    plt.subplot(122); plt.imshow(segmentimg) #expect true color
-    # plt.subplot(221); plt.imshow(bin_fruit) #expect true color
+
     plt.title('area {}, pix_to_cm_multiplier {}'.format(area, pix_to_cm_multiplier))
     plt.axis('off')
     plt.show()
