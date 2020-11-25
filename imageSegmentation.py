@@ -134,6 +134,10 @@ def getAreaOfFood(img1):
     rice_contour = largest_areas[-1]
     rice_area = cv2.contourArea(rice_contour)
 
+    cv2.drawContours(img_th, [largest_areas[-1]], 0, (0,255,0), -1)
+    cv2.imwrite('{}\\22.1 largest_areas.jpg'.format(data),img_th)
+
+
 
     #finding the area of skin. find area of biggest contour
     skin2 = skin - mask_rice2

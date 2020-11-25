@@ -9,7 +9,7 @@ import requests
 density_of_rice = 1.375
 
 #skin of photo to real multiplier
-skin_multiplier = 5*2.3
+skin_actual_area = 5*2.3
 
 def get_calories_from_keyword(keyword):
 	url = "https://api.myfitnesspal.com/public/nutrition"
@@ -58,15 +58,15 @@ def getCalorie(label, volume): #volume in cm^3
 	calorie_tot = (calorie/100.0)*mass
 	return mass, calorie_tot, calorie #calorie per 100 grams
 
-def getVolume(area, skin_area, pix_to_cm_multiplier, rice_contour, radius):
-	area_rice = (area*skin_multiplier)/skin_area #area in cm^2
-	volume = 100
+def getVolume(area, skin_pixel_area, pix_to_cm_multiplier, rice_contour, radius):
+	area_rice = (area*skin_actual_area)/skin_pixel_area #area in cm^2
 	height_approx = 10
 	#assume thai fastfood, they serve with plate, and it's in spherical dome shape
-	radius = radius*pix_to_cm_multiplier
-	volume = (4/3)*np.pi*radius*radius*height_approx/2
-	print('\narea_rice', area_rice,'\npix_to_cm_multiplier',pix_to_cm_multiplier, '\nradius', radius,'\nvolume', volume,'\nskin_area', skin_area)
-	return volume
+	radius = np.sqrt(area_rice/np.pi)
+	volume = (4/3)*np.pi*radius*radius*radius/2
+	print('\narea_rice', area_rice,'\npix_to_cm_multiplier',pix_to_cm_multiplier, '\nradius', radius,'\nvolume', volume,'\nskin_pixel_area', skin_pixel_area)
+	# Know issued : Volume inconsistency with pixel area shape, make caculation is not accurate 
+	return volume*pix_to_cm_multiplier*0.1
 
 def calories(result,img):
 	# 1 tablespoon of rice = approx. 15g or 1/2 oz 3 tablespoons of rice = approx. 45g or 1 1/2 oz

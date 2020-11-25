@@ -11,6 +11,8 @@ from tkinter.ttk import Frame, Button, Label, Style, LabelFrame
 
 zoom = 0.2
 upload = cv2.imread("upload.png")
+fontStyle = "Arial 20 bold italic"
+
 
 class Example(Frame):
     area = None
@@ -45,16 +47,16 @@ class Example(Frame):
         self.area.grid(row=1, column=0, columnspan=4, rowspan=4,
             padx=0, sticky=E+W+S+N)
 
-        Label(self,text="ชื่ออาหาร",font = "Arial 20 bold italic").grid(row=1, column=1,sticky='W', padx=1, pady=1)
-        Label(self,text="", font = "Arial 20 bold italic").grid(row=1, column=2, sticky='W', padx=1, pady=1)
+        Label(self,text="ชื่ออาหาร",font = fontStyle).grid(row=1, column=1,sticky='W', padx=1, pady=1)
+        Label(self,text="", font = fontStyle).grid(row=1, column=2, sticky='W', padx=1, pady=1)
 
-        Label(self,text="น้ำหนักประมาณ",font = "Arial 20 bold italic").grid(row=2, column=1, sticky='W', padx=1, pady=1)
-        Label(self,text="0 g",font = "Arial 20 bold italic").grid(row=2, column=2, sticky='W', padx=1, pady=1)
+        Label(self,text="น้ำหนักประมาณ",font = fontStyle).grid(row=2, column=1, sticky='W', padx=1, pady=1)
+        Label(self,text="0 g",font = fontStyle).grid(row=2, column=2, sticky='W', padx=1, pady=1)
 
 
-        Label(self,text="พลังงาน",font = "Arial 20 bold italic").grid(row=3, column=1,  sticky='W', padx=1, pady=1)
-        # Label(self,text="250",font = "Arial 20 bold italic").grid(row=3, column=2, sticky='W', padx=1, pady=1)
-        # Label(self,text="kcal",font = "Arial 20 bold italic").grid(row=3, column=3, sticky='W', padx=1, pady=1)
+        Label(self,text="พลังงาน",font = fontStyle).grid(row=3, column=1,  sticky='W', padx=1, pady=1)
+        # Label(self,text="250",font = fontStyle).grid(row=3, column=2, sticky='W', padx=1, pady=1)
+        # Label(self,text="kcal",font = fontStyle).grid(row=3, column=3, sticky='W', padx=1, pady=1)
 
         hbtn = Button(self, text="เลือกภาพจากคอมพิวเตอร์", command=self.select_image)
         hbtn.grid(row=5, column=0, padx=150)
@@ -68,14 +70,14 @@ class Example(Frame):
             # edges in it
             image = cv2.imread(path)
             json_label = get_label(path)
-            Label(self,text=json_label['name']+" accuracy: "+json_label['accurate'],font = "Arial 20 bold italic").grid(row=1, column=2, sticky='W', padx=1, pady=1)
+            Label(self,text=json_label['name']+" accuracy: "+json_label['accurate'],font = fontStyle).grid(row=1, column=2, sticky='W', padx=1, pady=1)
 
             # calories_from_myfisness = get_calories_from_keyword(json_label)
            
 
             mass, final_calories = calories(json_label, image)
-            Label(self,text=str(mass)+ "  g" ,font = "Arial 20 bold italic").grid(row=2, column=2, sticky='W', padx=1, pady=1)
-            Label(self,text=str(final_calories)+ "  kcal" ,font = "Arial 20 bold italic").grid(row=3, column=2, sticky='W', padx=1, pady=1)
+            Label(self,text=str(mass)+ "  g" ,font = fontStyle).grid(row=2, column=2, sticky='W', padx=1, pady=1)
+            Label(self,text=str(final_calories)+ "  kcal" ,font = fontStyle).grid(row=3, column=2, sticky='W', padx=1, pady=1)
             # image_cv = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # convert the images to PIL format...
             display_img = image.copy()
