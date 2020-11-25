@@ -76,9 +76,10 @@ class Example(Frame):
             mass, final_calories = calories(json_label, image)
             Label(self,text=str(mass)+ "  g" ,font = "Arial 20 bold italic").grid(row=2, column=2, sticky='W', padx=1, pady=1)
             Label(self,text=str(final_calories)+ "  kcal" ,font = "Arial 20 bold italic").grid(row=3, column=2, sticky='W', padx=1, pady=1)
-            image_cv = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            # image_cv = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # convert the images to PIL format...
-            image_resize = cv2.resize(image_cv, (400, 400), interpolation = cv2.INTER_AREA)
+            display_img = image.copy()
+            image_resize = cv2.resize(display_img, (400, 400), interpolation = cv2.INTER_AREA)
             image = Image.fromarray(image_resize)
 
             # ...and then to ImageTk format
@@ -95,14 +96,13 @@ class Example(Frame):
             # otherwise, update the image panels
             else:
                 # update the pannels
-                area, bin_fruit, img_food, skin_area, fruit_contour, pix_to_cm_multiplier, raduis = getAreaOfFood(image_resize)
-             
+                # area, bin_fruit, img_food, skin_area, fruit_contour, pix_to_cm_multiplier, raduis = getAreaOfFood(image_resize)
+                img_food = cv2.cvtColor(image_resize, cv2.COLOR_BGR2RGB)
                 image = Image.fromarray(img_food)
                 # ...and then to ImageTk format
                 image = ImageTk.PhotoImage(image)
                 self.area.configure(image=image)
                 self.area.image = image
-
 
 def main():
 

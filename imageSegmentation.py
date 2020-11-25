@@ -30,28 +30,28 @@ def getAreaOfFood(img1):
         cv2.drawContours(mask_child, [target_list], 0, (255,255,255,255), -1)
     cv2.imwrite('{}\\5.1 mask_rice.jpg'.format(data),mask_child)
 
-      #erode before finding contours
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
-    erode_rice = cv2.dilate(mask_child,kernel,iterations = 1)
-    cv2.imwrite('{}\\5.2 erode_rice.jpg'.format(data),erode_rice)
+    #   #erode before finding contours
+    # kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
+    # erode_rice = cv2.dilate(mask_child,kernel,iterations = 1)
+    # cv2.imwrite('{}\\5.2 erode_rice.jpg'.format(data),erode_rice)
 
-    # #find largest contour since that will be the rice
-    img_th = cv2.adaptiveThreshold(erode_rice,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
-    cv2.imwrite('{}\\5.3 img_th_rice.jpg'.format(data),img_th)
+    # # #find largest contour since that will be the rice
+    # img_th = cv2.adaptiveThreshold(erode_rice,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    # cv2.imwrite('{}\\5.3 img_th_rice.jpg'.format(data),img_th)
 
-    contours, hierarchy = cv2.findContours(img_th, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    mask_rice = np.zeros(mask_child.shape, np.uint8)
-    largest_areas = sorted(contours, key=cv2.contourArea)
-    cv2.drawContours(mask_rice, [largest_areas[-1]], 0, (255,255,255), -1)
-    cv2.imwrite('{}\\5.4 mask_rice.jpg'.format(data),mask_rice)
+    # contours, hierarchy = cv2.findContours(img_th, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    # mask_rice = np.zeros(mask_child.shape, np.uint8)
+    # largest_areas = sorted(contours, key=cv2.contourArea)
+    # cv2.drawContours(mask_rice, [largest_areas[-1]], 0, (255,255,255), -1)
+    # cv2.imwrite('{}\\5.4 mask_rice.jpg'.format(data),mask_rice)
 
-    # #dilate rice now
-    kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
-    mask_rice2 = cv2.dilate(mask_rice,kernel2,iterations = 1)
-    cv2.imwrite('{}\\5.5 mask_rice2.jpg'.format(data),mask_rice2)
-    res = cv2.bitwise_and(mask_child, mask_child,mask = mask_rice2)
-    rice_final = cv2.bitwise_and(img1,img1,mask = mask_rice2)
-    cv2.imwrite('{}\\5.6 rice_final.jpg'.format(data),rice_final)
+    # # #dilate rice now
+    # kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
+    # mask_rice2 = cv2.dilate(mask_rice,kernel2,iterations = 1)
+    # cv2.imwrite('{}\\5.5 mask_rice2.jpg'.format(data),mask_rice2)
+    # res = cv2.bitwise_and(mask_child, mask_child,mask = mask_rice2)
+    # rice_final = cv2.bitwise_and(img1,img1,mask = mask_rice2)
+    # cv2.imwrite('{}\\5.6 rice_final.jpg'.format(data),rice_final)
 
 
     # find contours. sort. and find the biggest contour. the biggest contour corresponds to the plate and food
@@ -60,14 +60,14 @@ def getAreaOfFood(img1):
     largest_areas = sorted(contours, key=cv2.contourArea)
     cv2.drawContours(mask, [largest_areas[-1]], 0, (255,255,255,255), -1)
     cv2.imwrite('{}\\5 mask.jpg'.format(data),mask)
-    img_bigcontour = cv2.bitwise_and(img1,img1,mask = mask_child)
+    img_bigcontour = cv2.bitwise_and(img1,img1,mask = mask)
     cv2.imwrite('{}\\6 img_bigcontour.jpg'.format(data),img_bigcontour)
 
     # convert to hsv. otsu threshold in s to remove plate
     hsv_img = cv2.cvtColor(img_bigcontour, cv2.COLOR_BGR2HSV)
     cv2.imwrite('{}\\7 hsv_img.jpg'.format(data),hsv_img)
     h,s,v = cv2.split(hsv_img)
-    mask_plate = cv2.inRange(hsv_img, np.array([0,0,100]), np.array([255,90,255]))
+    mask_plate = cv2.inRange(hsv_img, np.array([0,0,50]), np.array([200,90,250]))
 
     cv2.imwrite('{}\\8 mask_plate.jpg'.format(data),mask_plate)
 
@@ -96,7 +96,7 @@ def getAreaOfFood(img1):
     cv2.imwrite('{}\\16 rice_bw.jpg'.format(data),rice_bin)
 
     #erode before finding contours
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
     erode_rice = cv2.erode(rice_bin,kernel,iterations = 1)
     cv2.imwrite('{}\\17 erode_rice.jpg'.format(data),erode_rice)
 
@@ -112,7 +112,7 @@ def getAreaOfFood(img1):
 
 
     #dilate now
-    kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
+    kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
     mask_rice2 = cv2.dilate(mask_rice,kernel2,iterations = 1)
     cv2.imwrite('{}\\20 mask_rice2.jpg'.format(data),mask_rice2)
     res = cv2.bitwise_and(rice_bin,rice_bin,mask = mask_rice2)
@@ -139,7 +139,7 @@ def getAreaOfFood(img1):
     skin2 = skin - mask_rice2
     cv2.imwrite('{}\\23 skin2.jpg'.format(data),skin2)
     #erode before finding contours
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
     skin_e = cv2.erode(skin2,kernel,iterations = 1)
     cv2.imwrite('{}\\24 skin_e .jpg'.format(data),skin_e )
     img_th = cv2.adaptiveThreshold(skin_e,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
@@ -147,12 +147,12 @@ def getAreaOfFood(img1):
     contours, hierarchy = cv2.findContours(img_th, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     mask_skin = np.zeros(skin.shape, np.uint8)
     largest_areas = sorted(contours, key=cv2.contourArea)
-    cv2.drawContours(mask_skin, [largest_areas[-1]], 0, (255,255,255), -1)
+    cv2.drawContours(mask_skin, [largest_areas[-2]], 0, (255,255,255), -1)
     cv2.imwrite('{}\\26 mask_skin.jpg'.format(data),mask_skin)
 
 
 
-    skin_rect = cv2.minAreaRect(largest_areas[-1])
+    skin_rect = cv2.minAreaRect(largest_areas[-2])
     box = cv2.boxPoints(skin_rect)
     box = np.int0(box)
     mask_skin2 = np.zeros(skin.shape, np.uint8)
