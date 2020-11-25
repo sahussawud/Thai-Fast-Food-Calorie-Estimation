@@ -32,25 +32,25 @@ def getAreaOfFood(img1):
 
       #erode before finding contours
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
-    erode_fruit = cv2.dilate(mask_child,kernel,iterations = 1)
-    cv2.imwrite('{}\\5.2 erode_rice.jpg'.format(data),erode_fruit)
+    erode_rice = cv2.dilate(mask_child,kernel,iterations = 1)
+    cv2.imwrite('{}\\5.2 erode_rice.jpg'.format(data),erode_rice)
 
-    # #find largest contour since that will be the fruit
-    img_th = cv2.adaptiveThreshold(erode_fruit,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    # #find largest contour since that will be the rice
+    img_th = cv2.adaptiveThreshold(erode_rice,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     cv2.imwrite('{}\\5.3 img_th_rice.jpg'.format(data),img_th)
 
     contours, hierarchy = cv2.findContours(img_th, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    mask_fruit = np.zeros(mask_child.shape, np.uint8)
+    mask_rice = np.zeros(mask_child.shape, np.uint8)
     largest_areas = sorted(contours, key=cv2.contourArea)
-    cv2.drawContours(mask_fruit, [largest_areas[-1]], 0, (255,255,255), -1)
-    cv2.imwrite('{}\\5.4 mask_rice.jpg'.format(data),mask_fruit)
+    cv2.drawContours(mask_rice, [largest_areas[-1]], 0, (255,255,255), -1)
+    cv2.imwrite('{}\\5.4 mask_rice.jpg'.format(data),mask_rice)
 
     # #dilate rice now
     kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
-    mask_fruit2 = cv2.dilate(mask_fruit,kernel2,iterations = 1)
-    cv2.imwrite('{}\\5.5 mask_rice2.jpg'.format(data),mask_fruit2)
-    res = cv2.bitwise_and(mask_child, mask_child,mask = mask_fruit2)
-    rice_final = cv2.bitwise_and(img1,img1,mask = mask_fruit2)
+    mask_rice2 = cv2.dilate(mask_rice,kernel2,iterations = 1)
+    cv2.imwrite('{}\\5.5 mask_rice2.jpg'.format(data),mask_rice2)
+    res = cv2.bitwise_and(mask_child, mask_child,mask = mask_rice2)
+    rice_final = cv2.bitwise_and(img1,img1,mask = mask_rice2)
     cv2.imwrite('{}\\5.6 rice_final.jpg'.format(data),rice_final)
 
 
@@ -75,69 +75,68 @@ def getAreaOfFood(img1):
     # item except a viand(กับข้าว), example rice 
     cv2.imwrite('{}\\9 mask_not_plate.jpg'.format(data),mask_not_plate)
 
-    fruit_skin = cv2.bitwise_and(img_bigcontour,img_bigcontour,mask = mask_not_plate)
-    cv2.imwrite('{}\\10 fruit_skin.jpg'.format(data),fruit_skin)
-
+    rice_skin = cv2.bitwise_and(img_bigcontour,img_bigcontour,mask = mask_not_plate)
+    cv2.imwrite('{}\\10 rice_skin.jpg'.format(data),rice_skin)
 
 
     #convert to hsv to detect and remove skin pixels
-    hsv_img = cv2.cvtColor(fruit_skin, cv2.COLOR_BGR2HSV)
+    hsv_img = cv2.cvtColor(rice_skin, cv2.COLOR_BGR2HSV)
     cv2.imwrite('{}\\11 hsv_img.jpg'.format(data),hsv_img)
     skin = cv2.inRange(hsv_img, np.array([0,10,60]), np.array([10,160,255])) #Scalar(0, 10, 60), Scalar(20, 150, 255)
     cv2.imwrite('{}\\12 skin.jpg'.format(data),skin)
     not_skin = cv2.bitwise_not(skin); #invert skin and black
     cv2.imwrite('{}\\13 not_skin.jpg'.format(data),not_skin)
-    fruit = cv2.bitwise_and(fruit_skin,fruit_skin,mask = not_skin) #get only fruit pixels
-    cv2.imwrite('{}\\14 fruit.jpg'.format(data),fruit)
+    rice = cv2.bitwise_and(rice_skin,rice_skin,mask = not_skin) #get only rice pixels
+    cv2.imwrite('{}\\14 rice.jpg'.format(data),rice)
 
 
-    fruit_bw = cv2.cvtColor(fruit, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('{}\\15 fruit_bw.jpg'.format(data),fruit_bw)
-    fruit_bin = cv2.inRange(fruit_bw, 10, 255) #binary of fruit
-    cv2.imwrite('{}\\16 fruit_bw.jpg'.format(data),fruit_bin)
+    rice_bw = cv2.cvtColor(rice, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite('{}\\15 rice_bw.jpg'.format(data),rice_bw)
+    rice_bin = cv2.inRange(rice_bw, 10, 255) #binary of rice
+    cv2.imwrite('{}\\16 rice_bw.jpg'.format(data),rice_bin)
 
     #erode before finding contours
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
-    erode_fruit = cv2.erode(fruit_bin,kernel,iterations = 1)
-    cv2.imwrite('{}\\17 erode_fruit.jpg'.format(data),erode_fruit)
+    erode_rice = cv2.erode(rice_bin,kernel,iterations = 1)
+    cv2.imwrite('{}\\17 erode_rice.jpg'.format(data),erode_rice)
 
-    #find largest contour since that will be the fruit
-    img_th = cv2.adaptiveThreshold(erode_fruit,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    #find largest contour since that will be the rice
+    img_th = cv2.adaptiveThreshold(erode_rice,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     cv2.imwrite('{}\\18 img_th.jpg'.format(data),img_th)
 
     contours, hierarchy = cv2.findContours(img_th, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    mask_fruit = np.zeros(fruit_bin.shape, np.uint8)
+    mask_rice = np.zeros(rice_bin.shape, np.uint8)
     largest_areas = sorted(contours, key=cv2.contourArea)
-    cv2.drawContours(mask_fruit, [largest_areas[-2]], 0, (255,255,255), -1)
-    cv2.imwrite('{}\\19 mask_fruit.jpg'.format(data),mask_fruit)
+    cv2.drawContours(mask_rice, [largest_areas[-2]], 0, (255,255,255), -1)
+    cv2.imwrite('{}\\19 mask_rice.jpg'.format(data),mask_rice)
 
 
     #dilate now
     kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
-    mask_fruit2 = cv2.dilate(mask_fruit,kernel2,iterations = 1)
-    cv2.imwrite('{}\\20 mask_fruit2.jpg'.format(data),mask_fruit2)
-    res = cv2.bitwise_and(fruit_bin,fruit_bin,mask = mask_fruit2)
-    fruit_final = cv2.bitwise_and(img1,img1,mask = mask_fruit2)
+    mask_rice2 = cv2.dilate(mask_rice,kernel2,iterations = 1)
+    cv2.imwrite('{}\\20 mask_rice2.jpg'.format(data),mask_rice2)
+    res = cv2.bitwise_and(rice_bin,rice_bin,mask = mask_rice2)
+    rice_final = cv2.bitwise_and(img1,img1,mask = mask_rice2)
     # draw eclipce
     # ellipse = cv2.fitEllipse(largest_areas[-2])
-    # fruit_final = cv2.ellipse(fruit_final,ellipse,(0,255,0),10)
-    # 
+    # rice_final = cv2.ellipse(rice_final,ellipse,(0,255,0),10)
+
     (x,y),radius = cv2.minEnclosingCircle(largest_areas[-2])
     center = (int(x),int(y))
     radius = int(radius)
-    fruit_final = cv2.circle(fruit_final,center,radius,(0,255,0),2)
-    cv2.imwrite('{}\\21 fruit_final.jpg'.format(data),fruit_final)
-    #find area of fruit
-    img_th = cv2.adaptiveThreshold(mask_fruit2,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
+    rice_final = cv2.circle(img1,center,radius,(0,255,0),2)
+    cv2.imwrite('{}\\21 rice_final.jpg'.format(data),rice_final)
+    #find area of rice
+    img_th = cv2.adaptiveThreshold(mask_rice2,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2)
     cv2.imwrite('{}\\22 img_th.jpg'.format(data),img_th)
     contours, hierarchy = cv2.findContours(img_th, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     largest_areas = sorted(contours, key=cv2.contourArea)
-    fruit_contour = largest_areas[-1]
-    fruit_area = cv2.contourArea(fruit_contour)
+    rice_contour = largest_areas[-1]
+    rice_area = cv2.contourArea(rice_contour)
 
 
     #finding the area of skin. find area of biggest contour
-    skin2 = skin - mask_fruit2
+    skin2 = skin - mask_rice2
     cv2.imwrite('{}\\23 skin2.jpg'.format(data),skin2)
     #erode before finding contours
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
@@ -162,13 +161,14 @@ def getAreaOfFood(img1):
 
     pix_height = max(skin_rect[1])
     pix_to_cm_multiplier = 5.0/pix_height
+    print('\n\n\n\n\n\npix_height :', pix_height)
     skin_area = cv2.contourArea(box)
 
-    return fruit_area, mask_fruit2, fruit_final, skin_area, fruit_contour, pix_to_cm_multiplier
+    return rice_area, mask_rice2, rice_final, skin_area, rice_contour, pix_to_cm_multiplier, radius
 
 if __name__ == '__main__':
     img1 = cv2.imread(sys.argv[1])
-    area, bin_fruit, img_food, skin_area, fruit_contour, pix_to_cm_multiplier = getAreaOfFood(img1)
+    area, bin_rice, img_food, skin_area, rice_contour, pix_to_cm_multiplier = getAreaOfFood(img1)
 
     origimg = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
     segmentimg = cv2.cvtColor(img_food, cv2.COLOR_BGR2RGB)

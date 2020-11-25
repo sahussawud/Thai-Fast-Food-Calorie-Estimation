@@ -1,5 +1,5 @@
 # import the necessary packages
-from calories import get_label, get_calories_from_keyword
+from calories import get_label, get_calories_from_keyword, calories
 from imageSegmentation import getAreaOfFood
 from tkinter import filedialog
 from PIL import Image
@@ -48,8 +48,8 @@ class Example(Frame):
         Label(self,text="ชื่ออาหาร",font = "Arial 20 bold italic").grid(row=1, column=1,sticky='W', padx=1, pady=1)
         Label(self,text="", font = "Arial 20 bold italic").grid(row=1, column=2, sticky='W', padx=1, pady=1)
 
-        Label(self,text="น้ำหนัก",font = "Arial 20 bold italic").grid(row=2, column=1, sticky='W', padx=1, pady=1)
-        Label(self,text="40 กรัม",font = "Arial 20 bold italic").grid(row=2, column=2, sticky='W', padx=1, pady=1)
+        Label(self,text="น้ำหนักประมาณ",font = "Arial 20 bold italic").grid(row=2, column=1, sticky='W', padx=1, pady=1)
+        Label(self,text="0 g",font = "Arial 20 bold italic").grid(row=2, column=2, sticky='W', padx=1, pady=1)
 
 
         Label(self,text="พลังงาน",font = "Arial 20 bold italic").grid(row=3, column=1,  sticky='W', padx=1, pady=1)
@@ -70,10 +70,12 @@ class Example(Frame):
             json_label = get_label(path)
             Label(self,text=json_label['name']+" accuracy: "+json_label['accurate'],font = "Arial 20 bold italic").grid(row=1, column=2, sticky='W', padx=1, pady=1)
 
-            calories_from_myfisness = get_calories_from_keyword(json_label)
-            Label(self,text=calories_from_myfisness,font = "Arial 20 bold italic").grid(row=3, column=2, sticky='W', padx=1, pady=1)
-            # OpenCV represents images in BGR order; however PIL represents
-            # images in RGB order, so we need to swap the channels
+            # calories_from_myfisness = get_calories_from_keyword(json_label)
+           
+
+            mass, final_calories = calories(json_label, image)
+            Label(self,text=str(mass)+ "  g" ,font = "Arial 20 bold italic").grid(row=2, column=2, sticky='W', padx=1, pady=1)
+            Label(self,text=str(final_calories)+ "  kcal" ,font = "Arial 20 bold italic").grid(row=3, column=2, sticky='W', padx=1, pady=1)
             image_cv = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # convert the images to PIL format...
             image_resize = cv2.resize(image_cv, (400, 400), interpolation = cv2.INTER_AREA)
@@ -93,9 +95,9 @@ class Example(Frame):
             # otherwise, update the image panels
             else:
                 # update the pannels
-                area, bin_fruit, img_food, skin_area, fruit_contour, pix_to_cm_multiplier = getAreaOfFood(image_resize)
+                area, bin_fruit, img_food, skin_area, fruit_contour, pix_to_cm_multiplier, raduis = getAreaOfFood(image_resize)
+             
                 image = Image.fromarray(img_food)
-
                 # ...and then to ImageTk format
                 image = ImageTk.PhotoImage(image)
                 self.area.configure(image=image)
@@ -105,7 +107,7 @@ class Example(Frame):
 def main():
 
     root = Tk()
-    root.geometry("800x500+200+200")
+    root.geometry("900x500+200+200")
     app = Example()
     root.mainloop()
 
